@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/JavaScript" src="jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+    function demo(){
+        var username=$('#username').val();
+        var password=$('#password').val();
+        var data={"content":{"username":username,"password":password}};
+
+        $.ajax({
+            type:"POST",
+            url:"/resources/request/UserDemo@checkUser",
+            contentType: "application/json; charset=utf-8",
+            data:JSON.stringify(data),
+            success:function(result){
+                showCheckResult(result.content);
+            },
+            error:function(result){
+                $("#div2").html(result);
+            }
+         });
+    }
+
+    function showCheckResult(content){
+        if(content=='0'){
+            alert("This username doesn't exist or the password is wrong !");
+        }else{
+            $('#loginDiv').hide();
+            $('#welcomeDiv').html("welcome !!!!!");
+        }
+    }
+    </script>
+</head>
+
+<body>
+
+<div id="loginDiv">
+    <label>用户名：</label>
+    <input id="username" type="text">
+    <label>密码：</label>
+    <input id="password" type="text">
+    <button id="btn" onclick="demo()">Login</button>
+</div>
+<div id="welcomeDiv"></div>
+
+</body>
+</html>

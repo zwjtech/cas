@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/JavaScript" src="jquery-1.10.2.min.js"></script>
+    <script type="text/javascript">
+        function demo(){
+        var username=$('#username').val();
+        var password=$('#password').val();
+        var data={"content":{"userRegisterForm":{"username":username,"password":password}}};
+
+        $.ajax({
+            type:"POST",
+            url:"/resources/request/UserDemo@userRegister",
+            contentType: "application/json; charset=utf-8",
+            data:JSON.stringify(data),
+            success:function(result){
+                if(result.content.accountId>0){
+                    location.href ="login.html";
+                }else{
+                    alert("创建失败");
+                }
+            },
+            error:function(result){
+                alert("创建失败");
+            }
+         });
+    }
+    </script>
+</head>
+<body>
+    <label>用户名：</label>
+    <input id="username" type="text">
+    <label>密码：</label>
+    <input id="password" type="text">
+    <button id="btn" onclick="demo()">Register</button>
+    <div id="div1"></div>
+    <div id="div2"></div>
+</body>
+</html>

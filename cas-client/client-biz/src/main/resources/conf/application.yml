@@ -1,0 +1,27 @@
+worker:
+  name: UserDemo
+  maxTaskThreadNum: 100
+  accessControlAllowOrigin: '*'
+  security: {hasLoginCheck: false, hasAuth: false}
+  admin:
+    host: 127.0.0.1
+    port: 9111
+    nodeType: JOB_TRACKER
+    registry: multicast
+    registryAddress: 192.168.10.2:6381
+    remotingNetworkManager: netty
+    remotingServiceClient: tcp
+    group: {name: cloudcareWorkerGroup, instance: worker}
+  server: {host: 0.0.0.0, port: 8116, webContext: 'demowebapp'}
+
+database:
+  driverClassName: com.mysql.jdbc.Driver
+  url: jdbc:mysql://127.0.0.1:3306/logindemo?zeroDateTimeBehavior=convertToNull
+  username: root
+  password: "root"
+  maxIdle: 5
+  maxActive: 100
+
+cas:
+  serverName: http://cas.client.com:8116
+  casServerUrl: https://sso.guyan.com:8443/cas

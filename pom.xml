@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.cloudcare.misc</groupId>
+    <artifactId>cas</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <scm>
+        <connection>scm:git:http://git.jiagouyun.com/misc/cas.git</connection>
+        <url>http://git.jiagouyun.com/misc/cas</url>
+        <developerConnection>scm:git:ssh://git@git.jiagouyun.com:40022/misc/cas.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <modules>
+        <module>cas-server</module>
+        <module>cas-client</module>
+    </modules>
+
+</project>

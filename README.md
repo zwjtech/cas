@@ -8,6 +8,7 @@ Jetty+CAS+keytool配置CAS Server
  + 切换到\jdk1.8.0_77\bin下，用JDK自带的keytool生成证书： ` keytool    -genkeypair   -alias    "cjTomcat"   -keyalg    "RSA"    -keystore     "F:\keystore\tomcat.keystore"`
  + 导出证书：`keytool -export -file F:\keystore\guyan.crt -alias cjTomcat -keystore F:\keystore\tomcat.keystore`
  + 将证书导入到客户端的JDK中：`keytool -import -keystore "F:\JavaDev\jdk1.8.0_77\jre\lib\security\cacerts" -file F:\keystore\guyan.crt -alias cjTomcat`
+
 >*友情提示：为防止记错，期间出现的所有密码可设为同一密码*
 > [参数的详细说明](http://www.kafeitu.me/sso/2010/11/05/sso-cas-full-course.html )
 
@@ -22,8 +23,9 @@ demo中使用的是Jetty9，所以配置方式参考（http://blog.csdn.net/toma
  + 按照官网的做法，demo采用WAR overplay安装（[官网地址](https://github.com/apereo/cas-overlay-template/tree/4.2)）
 默认选择的master分支，为了稳定版本，选择4.2分支，可以直接下载压缩包。
  + 解压后，导入到Intellij中，
-PS：*xml配置文件中出现标红，显示错误信息是URI not registered.（[解决参考](https://www.jetbrains.com/help/idea/2017.1/schemas-and-dtds.html)）
-解决方法：点击File>Setting>Schemas and DTDs，把标红的URI都添加到ignore list中。*
+>PS：xml配置文件中出现标红，显示错误信息是URI not registered.（[解决参考](https://www.jetbrains.com/help/idea/2017.1/schemas-and-dtds.html)）
+解决方法：点击File>Setting>Schemas and DTDs，把标红的URI都添加到ignore list中。
+
  + 修改配置文件src\main\webapp\WEB-INF\spring-configuration\propertyFileConfigurer.xml：
 ```java
  <util:properties id="casProperties" location="file:F:\WebServer\cas\cas.properties" />

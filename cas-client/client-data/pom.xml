@@ -49,6 +49,11 @@
             <version>1.0.4-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.cloudcare.misc</groupId>
+            <artifactId>client-face</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 

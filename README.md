@@ -5,36 +5,36 @@ CAS （ Central Authentication Service ） 是 Yale 大学发起的一个企业�
 ## 部署CAS Server
 Jetty+CAS+keytool配置CAS Server
 1. 生成证书（[参考链接](http://blog.csdn.net/dotuian/article/details/9311109)）
-1）切换到\jdk1.8.0_77\bin下，用JDK自带的keytool生成证书： ` keytool    -genkeypair   -alias    "cjTomcat"   -keyalg    "RSA"    -keystore     "F:\keystore\tomcat.keystore"`
-2）导出证书：`keytool -export -file F:\keystore\guyan.crt -alias cjTomcat -keystore F:\keystore\tomcat.keystore`
-3）将证书导入到客户端的JDK中：`keytool -import -keystore "F:\JavaDev\jdk1.8.0_77\jre\lib\security\cacerts" -file F:\keystore\guyan.crt -alias cjTomcat`
+ + 切换到\jdk1.8.0_77\bin下，用JDK自带的keytool生成证书： ` keytool    -genkeypair   -alias    "cjTomcat"   -keyalg    "RSA"    -keystore     "F:\keystore\tomcat.keystore"`
+ + 导出证书：`keytool -export -file F:\keystore\guyan.crt -alias cjTomcat -keystore F:\keystore\tomcat.keystore`
+ + 将证书导入到客户端的JDK中：`keytool -import -keystore "F:\JavaDev\jdk1.8.0_77\jre\lib\security\cacerts" -file F:\keystore\guyan.crt -alias cjTomcat`
 >*友情提示：为防止记错，期间出现的所有密码可设为同一密码*
-[参数的详细说明](http://www.kafeitu.me/sso/2010/11/05/sso-cas-full-course.html )
+> [参数的详细说明](http://www.kafeitu.me/sso/2010/11/05/sso-cas-full-course.html )
 
 2. 安装Jetty（[参考链接](http://blog.csdn.net/dotuian/article/details/9311109)）
-1）官网上下载Jetty后，解压即可。进入安装目录，运行`java -jar start.jar`，即可启动Jetty Server。
+ + 官网上下载Jetty后，解压即可。进入安装目录，运行`java -jar start.jar`，即可启动Jetty Server。
 打开浏览器，访问localhost:8080，出现欢迎页面，安装成功。
-2）配置Jetty的SSL：`java -jar start.jar --add-to-start=ssl,http,https,deploy`。
+ + 配置Jetty的SSL：`java -jar start.jar --add-to-start=ssl,http,https,deploy`。
 然后，拷贝前面生成的keystore（就是tomcat.keystore）到{jetty_home}的etc/目录下；
 demo中使用的是Jetty9，所以配置方式参考（http://blog.csdn.net/tomato__/article/details/37656091 ）。在jetty的start.ini文件中配置KeyStorePath和密码。
 
 3. 部署cas server到jetty
-1）按照官网的做法，demo采用WAR overplay安装（[官网地址](https://github.com/apereo/cas-overlay-template/tree/4.2)）
+ + 按照官网的做法，demo采用WAR overplay安装（[官网地址](https://github.com/apereo/cas-overlay-template/tree/4.2)）
 默认选择的master分支，为了稳定版本，选择4.2分支，可以直接下载压缩包。
-2）解压后，导入到Intellij中，
+ + 解压后，导入到Intellij中，
 PS：*xml配置文件中出现标红，显示错误信息是URI not registered.（[解决参考](https://www.jetbrains.com/help/idea/2017.1/schemas-and-dtds.html)）
 解决方法：点击File>Setting>Schemas and DTDs，把标红的URI都添加到ignore list中。*
-3）修改配置文件src\main\webapp\WEB-INF\spring-configuration\propertyFileConfigurer.xml：
+ + 修改配置文件src\main\webapp\WEB-INF\spring-configuration\propertyFileConfigurer.xml：
 ```java
  <util:properties id="casProperties" location="file:F:\WebServer\cas\cas.properties" />
 ```
 将文件路径指向自己保存的位置。
-4）运行mvn clean,然后mvc install，成功打包项目
-5）把打包后的war包，放到Jetty_Home/webapp下
-6）重启服务器，再次访问cas server：https://localhost:8443 。可以看到身份认证页面，初始用户名和密码是casuser,Mellon。
+ + 运行mvn clean,然后mvc install，成功打包项目
+ + 把打包后的war包，放到Jetty_Home/webapp下
+ + 重启服务器，再次访问cas server：https://localhost:8443 。可以看到身份认证页面，初始用户名和密码是casuser,Mellon。
 
 4.  调用应用提供的restful API，实现cas server端身份认证
-1）查看server的几个配置文件deployerConfigContext.xml，cas.properties，cas-servlet.xml，会找到：
+ + 查看server的几个配置文件deployerConfigContext.xml，cas.properties，cas-servlet.xml，会找到：
 ```xml
 <bean id="primaryAuthenticationHandler" class="com.cloudcare.cas.authentication.DemoAcceptUsersAuthenticationHandler"/>
 ```

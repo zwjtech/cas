@@ -1,109 +1,79 @@
-#用户模块
-##1.1概述
- 用户模块的主要功能是为了管理用户、租户的信息
 
-##2.1具体功能
-###2.1.1 代码结构
-> 代码的相应模块主要包括：
-* user-biz:业务逻辑代码模块
-* user-data:与数据库关联模块
-* user-face:提供枚举类 、接口、传递数据和返回结果的类
-###2.1.2 实现的功能
-功能和业务逻辑代码都在user-biz模块中，user-face模块主要为我们提供了一些接口、枚举类、用来传递数据和返回结果的实体类
->主要功能有:
->>用户模块
-* 用户注册
-* 修改密码、用户信息、我的用户信息
-* 重置密码
-* 忘记密码重置密码
-* 忘记密码发送邮件
-* 实名认证
-* 用户身份检查
-* 查询用户信息、用户列表
-* 批量查询用户信息
-* 禁用、启用、删除用户
-* 切换租户
-* 普通用户绑定到代理商
-* 普通用户从代理商解绑
-* 代理商查询普通用户
-* 普通用户转代理商
->>租户模块
-* 禁用、启用、添加、修改租户
-* 给租户分配商品库、用户
-* 从租户撤回商品库、用户
-* 查询租户、用户能访问的商品库列表
-* 查询用户能访问的AK列表
-* 更新AK
-* 查询租户下的用户的列表、用户列表编号
-* 根据id、名称查询租户
-* 分页查询租户列表
-* 查询所有租户列表
-* 检查租户是否可用
-* 发送邮件给租户管理局
->>组织机构模块
-* 删除用户
-* 外部组织机构树
-* 组织机构树
-* 组织机构列表
-* 查看、修改、添加、删除组织机构
-* 添加用户到组织机构
-* 同步组织机构
->>日志模块
-* 查询日志列表
-* 保存日志
-##2.2 数据库表的结构和关系
->数据库的表的结构和user-data模块的model包下的实体类相对应，而这些实体类正是根据数据库的表生成的，所以这个模块也被称作数据管理。
-该模块是用QueryDsl框架处理数据的查询、持久化提供接口。
->数据库表如下：
-<table>
-<tr>
-<td>Table</td>
-<td>描述</td>
-</tr>
-<tr>
-<td>Account</td>
-<td>用户</td>
-</tr>
-<tr>
-<td>Certification</td>
-<td>實名認證</td>
-</tr>
-<tr>
-<td>Division</td>
-<td>行政區劃</td>
-</tr>
-<tr>
-<td>ExternalDataSource</td>
-<td>外部數據源</td>
-</tr>
-<tr>
-<td>FactorAccountHasAccount</td>
-<td>代理商用戶下面的用戶</td>
-</tr>
-<tr>
-<td>Organization</td>
-<td>組織機構</td>
-</tr>
-<tr>
-<td>OrganizationHasAccount</td>
-<td>組織下的用戶</td>
-</tr>
-<tr>
-<td>Tenant</td>
-<td>租戶</td>
-</tr>
-<tr>user
-<td>TenantHasAccount</td>
-<td>租戶對應的帳戶</td>
-</tr>
-<tr>
-<td>UserLog</td>
-<td>操作日志</td>
-</tr>
-</table>
+# CAS部署手册
+CAS （ Central Authentication Service ） 是 Yale 大学发起的一个企业级的、开源的项目，旨在为 Web 应用系统提供一种可靠的单点登录解决方法（属于 Web SSO ）。
 
- ##3.1部署与发布
-发布项目的具体的做法是：
-* 需要在-biz下的pom.xml文件中配置两个插件，一个是maven-dependency-plugin，目的是将所有的jar包拷贝一份放到lib文件夹下，另一个插件是maven-jar-plugin，目的是将需要启动的main方法打包生成一个jar包
-* 将所有的jar包都用以bat文件的方式启动命令“java-jar jar包所在的文件夹目录\main方法生成的jar包名.jar”即可发布成功。
+## 部署CAS Server
+Jetty+CAS+keytool配置CAS Server
+1. 生成证书（[参考链接](http://blog.csdn.net/dotuian/article/details/9311109)）
+1）切换到\jdk1.8.0_77\bin下，用JDK自带的keytool生成证书： ` keytool    -genkeypair   -alias    "cjTomcat"   -keyalg    "RSA"    -keystore     "F:\keystore\tomcat.keystore"`
+2）导出证书：`keytool -export -file F:\keystore\guyan.crt -alias cjTomcat -keystore F:\keystore\tomcat.keystore`
+3）将证书导入到客户端的JDK中：`keytool -import -keystore "F:\JavaDev\jdk1.8.0_77\jre\lib\security\cacerts" -file F:\keystore\guyan.crt -alias cjTomcat`
+>*友情提示：为防止记错，期间出现的所有密码可设为同一密码*
+[参数的详细说明](http://www.kafeitu.me/sso/2010/11/05/sso-cas-full-course.html )
 
+2. 安装Jetty（[参考链接](http://blog.csdn.net/dotuian/article/details/9311109)）
+1）官网上下载Jetty后，解压即可。进入安装目录，运行`java -jar start.jar`，即可启动Jetty Server。
+打开浏览器，访问localhost:8080，出现欢迎页面，安装成功。
+2）配置Jetty的SSL：`java -jar start.jar --add-to-start=ssl,http,https,deploy`。
+然后，拷贝前面生成的keystore（就是tomcat.keystore）到{jetty_home}的etc/目录下；
+demo中使用的是Jetty9，所以配置方式参考（http://blog.csdn.net/tomato__/article/details/37656091 ）。在jetty的start.ini文件中配置KeyStorePath和密码。
+
+3. 部署cas server到jetty
+1）按照官网的做法，demo采用WAR overplay安装（[官网地址](https://github.com/apereo/cas-overlay-template/tree/4.2)）
+默认选择的master分支，为了稳定版本，选择4.2分支，可以直接下载压缩包。
+2）解压后，导入到Intellij中，
+PS：*xml配置文件中出现标红，显示错误信息是URI not registered.（[解决参考](https://www.jetbrains.com/help/idea/2017.1/schemas-and-dtds.html)）
+解决方法：点击File>Setting>Schemas and DTDs，把标红的URI都添加到ignore list中。*
+3）修改配置文件src\main\webapp\WEB-INF\spring-configuration\propertyFileConfigurer.xml：
+```java
+ <util:properties id="casProperties" location="file:F:\WebServer\cas\cas.properties" />
+```
+将文件路径指向自己保存的位置。
+4）运行mvn clean,然后mvc install，成功打包项目
+5）把打包后的war包，放到Jetty_Home/webapp下
+6）重启服务器，再次访问cas server：https://localhost:8443 。可以看到身份认证页面，初始用户名和密码是casuser,Mellon。
+
+4.  调用应用提供的restful API，实现cas server端身份认证
+1）查看server的几个配置文件deployerConfigContext.xml，cas.properties，cas-servlet.xml，会找到：
+```xml
+<bean id="primaryAuthenticationHandler" class="com.cloudcare.cas.authentication.DemoAcceptUsersAuthenticationHandler"/>
+```
+可通过手动方式注册我们的身份认证bean。可参考源代码中使用handler，继承其父类后，编写自己的bean。
+
+## 部署CAS Client（[参考](http://blog.csdn.net/my580236/article/details/39253863)）
+1）给应用添加过滤器：由于demo应用没有web.xml文件，使用Jetty Server添加过滤器的方式。
+>*各类监听器、过滤器说明（http://blog.csdn.net/yuwenruli/article/details/6612010）*
+
+```java
+webServer.addEventListener(new SingleSignOutHttpSessionListener());
+```
+```java
+HashMap<String,String> map3=new HashMap<String,String>();
+        String casServerUrl = Configs.getString("cas.casServerUrl");
+        map3.put("casServerUrlPrefix", casServerUrl);
+        webServer.addFilter(new SingleSignOutFilter(),"",map3, EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));HashMap<String,String> map3=new HashMap<String,String>();
+```
+```java
+HashMap<String,String> map1=new HashMap<String,String>();
+map1.put("casServerLoginUrl", casServerUrl +"/login");      //cas server login路径
+String serverName = Configs.getString("cas.serverName");
+map1.put("serverName", serverName);                   //应用所在的server name
+map1.put("useSession","true");                       //whether to store the Assertion in session or not
+map1.put("redirectAfterValidation","true");          //redirect to the same url after ticket valication
+webServer.addFilter(new AuthenticationFilter(),"/html/*",map1, EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));
+
+```
+```java
+HashMap<String,String> map2=new HashMap<String,String>();
+map2.put("casServerUrlPrefix", casServerUrl);      //the start of the cas server url
+map2.put("serverName", serverName);    //the start of the url that this application is runnin on
+webServer.addFilter(new Cas20ProxyReceivingTicketValidationFilter(),"/html/*",map2, EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));
+```
+2）在web应用中添加对cas client的依赖，以便调用cas client的过滤认证：
+```xml
+<dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.4.1</version>
+ </dependency>
+```

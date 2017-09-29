@@ -1,6 +1,5 @@
 package com.cloudcare.demo.biz.service.impl;
 
-import com.cloudcare.common.lang.LocaleBizRuntimeException;
 import com.cloudcare.common.lang.LocaleBizServiceException;
 import com.cloudcare.demo.biz.service.UserService;
 import com.cloudcare.cbis.demo.data.model.Account;
@@ -30,7 +29,7 @@ public class DefaultUserService extends AbstractBaseService implements UserServi
         Account account=accountRepository.findOneByModel(Filter.condition().equal("name",demoRegisterForm.getUsername()));
 
         if (nonNull(account)){
-            throw new LocaleBizServiceException("User.account.already.exist");
+            throw new LocaleBizServiceException("User.Account.AlreadyExist");
         }
 
         Account model=new Account();
